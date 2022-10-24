@@ -1,4 +1,4 @@
-package bruteforce;
+package dfs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
