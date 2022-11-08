@@ -30,74 +30,58 @@ public class Main_7579_토마토 {
         int n = Integer.parseInt(st.nextToken());
         // 높이
         int h = Integer.parseInt(st.nextToken());
-
         int[][][] map = new int[h][n][m];
-        boolean[][][] visit = new boolean[h][n][m];
-
         Queue<int[]> queue = new LinkedList<>();
-
+        // 익어야될 토마토 개수
+        int zeroCnt = 0;
 
         for (int k = 0; k < h; k++) {
             for (int i = 0; i < n; i++) {
                 st = new StringTokenizer(br.readLine());
                 for (int j = 0; j < m; j++) {
                     map[k][i][j] = Integer.parseInt(st.nextToken());
-                    if (map[k][i][j] == -1) visit[k][i][j] = true;
-                    else if (map[k][i][j] == 1) {
-                        visit[k][i][j] = true;
-                        queue.offer(new int[]{k, i, j, 0});
+                    // 익은 토마토 기준으로 탐색
+                    if (map[k][i][j] == 1) {
+                        queue.offer(new int[]{k, i, j});
+                    }else if(map[k][i][j] == 0){
+                        zeroCnt++;
                     }
                 }
             }
         }
-        int hoour = bfs(h, n, m, map, visit, queue);
-        // visit중 방문하지 않는 곳이 있다면, 모든 토마토가 익지 못하는 상황이므로 체크를 해줘야한다.
-        System.out.println(everyVisited(visit) ? hoour : -1);
+        int[] sol = bfs(h, n, m, map, queue, zeroCnt);
+        System.out.println(sol[1] == 0 ? sol[0] : -1);
     }
 
-    private static int bfs(int h, int n, int m, int[][][] map, boolean[][][] visit, Queue<int[]> queue) {
-
-        // 시간
-        int hour = 0;
-        // 현재 큐가 가진 시간, 시간이 바뀐는 지점을 체크 하기 위한 비교
-        int temp = 0, change = 0;
-
+    private static int[] bfs(int h, int n, int m, int[][][] map, Queue<int[]> queue ,int zeroCnt) {
+        int hour = -1;
+        int size = queue.size();
         while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-            int k = cur[0];
-            int i = cur[1];
-            int j = cur[2];
-            int cnt = temp = cur[3];
+            // 동일한 레벨의 큐의 사이즈의 루프 이후에는 다음 레벨을 의미한다.
+            for (int l = 0; l < size; l++) {
+                int[] cur = queue.poll();
+                int k = cur[0];
+                int i = cur[1];
+                int j = cur[2];
 
-            // 큐에서 꺼낸 시간 값이 이전의 시간 값이 다르다는것은 시간이 흐른것을 의미 한다.
-            if (change != temp) {
-                change = temp;
-                hour++;
-            }
-            for (int d = 0; d < 6; d++) {
-                int nk = k + dk[d];
-                int ni = i + di[d];
-                int nj = j + dj[d];
+                for (int d = 0; d < 6; d++) {
+                    int nk = k + dk[d];
+                    int ni = i + di[d];
+                    int nj = j + dj[d];
 
-                if (ni < 0 || nj < 0 || nk < 0 || ni > n - 1 || nj > m - 1 || nk > h - 1 || visit[nk][ni][nj]) continue;
-                // 0인 경우, 아직 덜 익은 곳이므로 탐색 진행을 위해 큐에 담고 방문 처리를 한다.
-                if (map[nk][ni][nj] == 0) {
-                    visit[nk][ni][nj] = true;
-                    queue.offer(new int[]{nk, ni, nj, cnt + 1});
+                    if (ni < 0 || nj < 0 || nk < 0 || ni > n - 1 || nj > m - 1 || nk > h - 1 ) continue;
+                    if (map[nk][ni][nj] == 0) {
+                        map[nk][ni][nj] = 1;
+                        zeroCnt--;
+                        queue.offer(new int[]{nk, ni, nj});
+                    }
                 }
             }
+            // 동일한 레벨의 큐 루프가 돌고 나면 다음 시간을 의미
+            hour++;
+            // 다음 레벨의 큐 사이즈 설정
+            size = queue.size();
         }
-        return hour;
-    }
-
-    private static boolean everyVisited(boolean[][][] visit) {
-        for (boolean[][] booleans : visit) {
-            for (boolean[] aBoolean : booleans) {
-                for (boolean b : aBoolean) {
-                    if (b == false) return false;
-                }
-            }
-        }
-        return true;
+        return new int[]{hour, zeroCnt};
     }
 }
