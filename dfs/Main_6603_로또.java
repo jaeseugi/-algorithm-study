@@ -12,12 +12,11 @@ public class Main_6603_로또 {
         String str = "";
         int[] lotto = new int[6];
 
-        StringBuffer sb = new StringBuffer();
-
         while (true) {
             str = br.readLine();
             if (str.equals(0)) break;
 
+            StringBuffer sb = new StringBuffer();
             StringTokenizer st = new StringTokenizer(str);
             int size = Integer.parseInt(st.nextToken());
             int[] number = new int[size];
@@ -27,18 +26,17 @@ public class Main_6603_로또 {
             }
 
             dfs(size, 0, 0, visit, number, lotto, sb);
-            System.out.println();
+            System.out.println(sb);
         }
     }
 
+    // 입력 받은 수의 전체 개수,  시작 인덱스, 자리수, 방문 여부, 사용 가능한 숫자 배열, 로또번호
     private static void dfs(int size, int cur, int p, boolean[] visit, int[] number, int[] lotto, StringBuffer sb) {
         if (p == 6) {
             for (int i : lotto) {
                 sb.append(i).append(" ");
             }
-            sb.setLength(sb.length() - 1);
-            System.out.println(sb.toString());
-            sb.setLength(0);
+            sb.append("\n");
             return;
         }
         for (int i = cur; i < size; i++) {

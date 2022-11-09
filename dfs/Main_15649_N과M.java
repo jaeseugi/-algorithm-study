@@ -14,10 +14,13 @@ public class Main_15649_N과M {
         int n = Integer.parseInt(st.nextToken());
         // 자릿수
         int m = Integer.parseInt(st.nextToken());
+        // 숫자에 대한 방문
         boolean[] visit = new boolean[n];
+        // 출력할 숫자를 담을 배열
         int[] number = new int[m];
         StringBuffer sb = new StringBuffer();
         dfs(m, 0, n, visit, number, sb);
+        System.out.println(sb);
     }
 
     // 전체 자릿수, 현재 자릿수, 사용할수있는 최대 수 , 방문배열, 출력시 사용할 숫자를 담은 배열
@@ -27,9 +30,7 @@ public class Main_15649_N과M {
             for (int i : number) {
                 sb.append(i).append(" ");
             }
-            sb.setLength(sb.length() - 1);
-            System.out.println(sb.toString());
-            sb.setLength(0);
+            sb.append("\n");
             return;
         }
         // 사용 가능한 최대 수 만큼 루프
