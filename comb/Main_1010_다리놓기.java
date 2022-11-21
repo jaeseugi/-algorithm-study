@@ -3,8 +3,11 @@ package comb;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main_1010_다리놓기 {
@@ -17,11 +20,17 @@ public class Main_1010_다리놓기 {
 
     private static int cnt = 0;
 
+    //    private static int[][] maps = new int[29][29];
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+
         // 입력의 첫 줄에는 테스트 케이스의 개수 T
         int T = Integer.parseInt(br.readLine());
+
+        int max = Integer.MIN_VALUE;
+        Queue<int[]> queue = new LinkedList<>();
 
         for (int t = 0; t < T; t++) {
             // 서쪽과 동쪽에 있는 사이트의 개수 정수 N, M (0 < N ≤ M < 30)
@@ -30,37 +39,24 @@ public class Main_1010_다리놓기 {
             int N = Integer.parseInt(st.nextToken());
             // 동쪽
             int M = Integer.parseInt(st.nextToken());
-            // mCn
 
-            // 동쪽 사이트 연결된곳 체크
-            boolean[] visits = new boolean[M];
-            AtomicInteger result = new AtomicInteger(0);
+            max = (max < M) ? M : max;
+            queue.add(new int[]{N, M});
+        }
 
-            long sTime = System.currentTimeMillis();
-            comb(0, 0, N, M, visits, result);
-            long eTime = System.currentTimeMillis();
-            System.out.println((double) (eTime - sTime)/ 1000 + "초");
+        BigInteger[] maps = new BigInteger[max+1];
 
-            System.out.println(result);
+        maps[0] = BigInteger.valueOf(1);
+        maps[1] = BigInteger.valueOf(1);
+        for (int i = 2; i <= max; i++) {
+            maps[i] = maps[i-1].multiply(BigInteger.valueOf(i));
+        }
+
+        while (!queue.isEmpty()){
+            int[] cur = queue.poll();
+            int n = cur[0];
+            int m = cur[1];
+            System.out.println(maps[m].divide(maps[m - n].multiply(maps[n])));
         }
     }
-
-    private static void comb(int idx, int start, int N, int M, boolean[] visits, AtomicInteger result) {
-
-        if (N - idx > M - start) {
-            return;
-        }
-
-        if (idx == N) {
-            result.incrementAndGet();
-            return;
-        }
-        for (int i = start; i < M; i++) {
-            if (visits[i]) continue;
-            visits[i] = true;
-            comb(idx + 1, i + 1, N, M, visits, result);
-            visits[i] = false;
-        }
-    }
-
 }
